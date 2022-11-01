@@ -1,0 +1,35 @@
+{% extends "auctions/layout.html" %}
+{% load static %}
+
+
+{% block body %}
+<style>
+  .flex {
+    display:flex;
+    justify-content:center;
+    flex-wrap:wrap;
+  }
+
+  .flex > div {
+    margin:1rem;
+  }
+</style>
+<center>
+    <h2>Active Listings</h2>
+    <div class="flex">
+    {% for auction in auctions%}
+    <div class="card" style="width: 14rem;">
+        <img src="media/{{auction.auction_url_img}}" class="card-img-top" alt="..." height="150rem">
+        <div class="card-body">
+          <h5 class="card-title">{{auction.auction_title}}</h5>
+          <!-- Change to  current bid -->
+          <h4 class="card-title">R${{auction.initial_bids}}</h4>
+          <p class="card-text">{{auction.auction_desc}}</p>
+          <a href="{% url 'list_details' auction.id %}" class="btn btn-primary">View all Details</a>
+        </div>
+      </div>
+    {% endfor %}
+    </div>
+    <center>
+
+{% endblock %}

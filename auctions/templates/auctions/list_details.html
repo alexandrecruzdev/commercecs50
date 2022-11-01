@@ -1,0 +1,45 @@
+
+{% extends "auctions/layout.html" %}
+{% block body %}
+<style>
+  .watchlist-addbutton {
+    display:flex;
+    justify-content:flex-end;
+  }
+</style>
+<div class="watchlist-addbutton">
+  {%if user.is_authenticated %}
+  <a href="{% url 'addWatchList' auction.id %}" class="btn btn-outline-primary" data-bs-toggle="button">Add to Watch List<img src="../static/img/view-icon.png" width="50rem"></a>
+  {% else %}
+  
+  {% endif %}
+</div>
+
+<center>
+<div class="card" style="width: 18rem;">
+    <img src="../media/{{auction.auction_url_img}}" class="card-img-top" alt="...">
+    <h5>{{auction.auction_title}}</h5>
+    <h4 class="card-title">R${{auction.initial_bids}}</h4>
+
+    <div class="card-body">
+    <p class="card-text">{{auction.auction_desc}}</p>
+      <!-- Change to  current bid -->
+      <div class="form-group">
+        <input class="form-control" type="number" name="bid" placeholder="Bid">
+    </div>
+     
+    <a href="" class="btn btn-primary">Place Bid</a>
+    </div>
+    <h3>Details</h3>
+    <ul>
+        <li>Listed by: {{auction.created_by}}</li>
+        <li>Category: {{auction.auction_category}}</li>
+    </ul>
+  </div>
+
+</center>
+
+
+  
+
+{% endblock %}
