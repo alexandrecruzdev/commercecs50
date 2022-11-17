@@ -18,16 +18,23 @@
     <h2>Active Listings</h2>
     <div class="flex">
     {% for auction in auctions%}
-    <div class="card" style="width: 14rem;">
-        <img src="media/{{auction.auction_url_img}}" class="card-img-top" alt="..." height="150rem">
-        <div class="card-body">
-          <h5 class="card-title">{{auction.auction_title}}</h5>
-          <!-- Change to  current bid -->
-          <h4 class="card-title">R${{auction.initial_bids}}</h4>
-          <p class="card-text">{{auction.auction_desc}}</p>
-          <a href="{% url 'list_details' auction.id %}" class="btn btn-primary">View all Details</a>
+    <div class="container-md">
+      <div class="container border  p-4 ">
+        <div class="row">
+          <div class="col">
+            <img src="media/{{auction.auction_url_img}}" class="card-img-top" alt="..." height="150rem">
+          </div>
+          <div class="col">
+            <h2 class="card-title">{{auction.auction_title}}</h2>
+            <h6 class="card-title"> <b>Price:</b> ${{auction.initial_bids}}</h6>
+            <p class="card-text">{{auction.auction_desc}}</p>
+            <p class="text-secondary">Created {{auction.created_at}}</p>
+            <a href="{% url 'list_details' auction.id %}" class="btn btn-outline-dark">View all Details</a>
+          </div>
+       
         </div>
       </div>
+    </div>
     {% endfor %}
     </div>
     <center>

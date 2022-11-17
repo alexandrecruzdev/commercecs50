@@ -1,24 +1,71 @@
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from .forms import AuctionForm
 import datetime
-from .models import User, Auction
+from .models import User, Auction,Watchlist
 from django.contrib.auth.decorators import login_required
+
+
+@login_required
+def showQtdWatchlist(request):
+    watchlist = Watchlist.objects.filter(user=request.user).first()
+    auctions = watchlist.auction.all()
+    qtdAuctions = len(auctions)
+    response = {
+        'qtdAuctions':qtdAuctions
+    }
+    return JsonResponse(response)
+
 
 @login_required
 def addWatchList(request,id_auction):
     print(f"{id_auction}{request.user}")
-    auction = Auction.objects.get(id=id)
+    watchlist = Watchlist.objects.get(user=request.user)
+    auction = Auction.objects.get(id=id_auction)
+    watchlist.auction.add(auction)
+    
+    
+    return HttpResponseRedirect(reverse('watchlist'))
+
+
+@login_required
+def deleteWatchList(request,id_auction):
+    print(f"{id_auction}{request.user}")
+    watchlist = Watchlist.objects.get(user=request.user)
+    auction = Auction.objects.get(id=id_auction)
+    watchlist.auction.remove(auction)
+    
+    
     return HttpResponseRedirect(reverse('watchlist'))
 
 
 @login_required
 def watchlist(request):
-    context = {}
-    return render(request,"auctions/watchlist.html",context)
+    watchlist = Watchlist.objects.filter(user=request.user).first()
+    if watchlist == None:
+        watchlist = Watchlist.objects.create(user=request.user)
+        watchlist.save()
+        watchlist = Watchlist.objects.filter(user=request.user).first()
+        auctions = watchlist.auction.all()
+        qtdAuctions = len(auctions)
+        context = {
+        'auctions':auctions,
+        'qtdAuctions':qtdAuctions
+        }
+        return render(request,"auctions/watchlist.html",context)
+
+
+    else:
+        auctions = watchlist.auction.all()
+        qtdAuctions = len(auctions)
+        context = {
+        'auctions':auctions,
+        'qtdAuctions':qtdAuctions
+        }
+        return render(request,"auctions/watchlist.html",context)
 
 
 
@@ -113,6 +160,8 @@ def register(request):
         try:
             user = User.objects.create_user(username, email, password)
             user.save()
+            watchlist = Watchlist.objects.create(user=user)
+            watchlist.save()
         except IntegrityError:
             return render(request, "auctions/register.html", {
                 "message": "Username already taken."

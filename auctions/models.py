@@ -6,11 +6,6 @@ class User(AbstractUser):
     pass
 
 
-
-class Watchlist(models.Model):
-    user = models.OneToOneField(User,on_delete=models.CASCADE,primary_key=True)
-    
-
 class Auction(models.Model):
 
     #...
@@ -22,10 +17,23 @@ class Auction(models.Model):
     auction_category = models.CharField(max_length=30)
     created_at = models.DateField()
     created_by = models.ForeignKey(User,on_delete=models.CASCADE)
-    
+
     def __str__(self):
         return self.auction_title
     
+
+
+class Watchlist(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    auction =  models.ManyToManyField(Auction)
+
+    def __str__(self):
+        return f"{self.user}"
+
+
+
+
+
 
 
 class Bid(models.Model):
