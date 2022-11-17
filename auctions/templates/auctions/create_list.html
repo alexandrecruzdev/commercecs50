@@ -3,7 +3,7 @@
 {% block body %}
     <div class="container-fluid">
     
-    <div class="container-md">
+    <div class="container-md p-4">
         <h2>Create Listings</h2>
         <form action="{% url 'create_list' %}" method="POST" enctype="multipart/form-data">
             {%csrf_token%}

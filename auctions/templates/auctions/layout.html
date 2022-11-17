@@ -8,6 +8,7 @@
         <link href="{% static 'auctions/styles.css' %}" rel="stylesheet">
     </head>
     <body>
+        <div class="container mt-4">
         <h1>Auctions</h1>
         <div>
             {% if user.is_authenticated %}
@@ -26,7 +27,12 @@
                 <a class="nav-link" href="{% url 'create_list' %}">Create Listings</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="{% url 'watchlist' %}">Watchlist</a>
+                <a class="nav-link" href="{% url 'watchlist' %}">
+                    Watchlist <button type="submit" id="quantidade" class="btn btn-dark p-0 pl-1 pr-1" style="--bs-btn-padding-y: .5rem; --bs-btn-padding-x: .1rem; --bs-btn-font-size: .20rem;">
+                       
+                        </button>
+                    <i class="bi bi-1-square-fill"></i>
+                </a>
             </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'logout' %}">Log Out</a>
@@ -43,5 +49,34 @@
         <hr>
         {% block body %}
         {% endblock %}
+    </div>
+
+    <script>
+
+
+        // -----------------------------------------
+  
+        endpoint = '/showQtdWatchlist/'
+  
+        $.ajax({
+          method: "GET",
+          url: endpoint,
+          success: function(data){
+          quantidade = data
+          showQuantidade()
+          
+  
+          },
+          error: function(error_data){
+            console.log("errors")
+            console.log(error_data)
+          }
+        })
+  
+        function showQuantidade() {
+            
+        }
+      </script>
+        
     </body>
 </html>
