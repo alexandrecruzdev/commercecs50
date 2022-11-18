@@ -81,9 +81,17 @@ def list_details(request,id_auction):
 
 def index(request):
     auctions = Auction.objects.all()
+    watchlist = Watchlist.objects.filter(user=request.user).first()
+    auctions_watchlist = watchlist.auction.all()
+    myauctions = []
+    for auction in auctions:
+        for auction_watchlist in auctions_watchlist:
+            if auction == auction_watchlist:
+                myauctions.append(auction)
 
     return render(request, "auctions/index.html" ,{
-        'auctions':auctions
+        'auctions':auctions,
+        'myauctions':myauctions
     })
 
 

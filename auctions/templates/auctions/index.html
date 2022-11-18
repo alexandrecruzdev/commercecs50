@@ -12,8 +12,17 @@
 
   .flex > div {
     margin:1rem;
+
+  
+  }
+
+  .cover {
+  
+    object-fit: cover;
+    
   }
 </style>
+
 <center>
     <h2>Active Listings</h2>
     <div class="flex">
@@ -22,16 +31,25 @@
       <div class="container border  p-4 ">
         <div class="row">
           <div class="col">
-            <img src="media/{{auction.auction_url_img}}" class="card-img-top" alt="..." height="150rem">
+            <img src="media/{{auction.auction_url_img}}" class="card-img-top cover" alt="...">
           </div>
-          <div class="col">
+          <div class="col w-20">
             <h2 class="card-title">{{auction.auction_title}}</h2>
             <h6 class="card-title"> <b>Price:</b> ${{auction.initial_bids}}</h6>
             <p class="card-text">{{auction.auction_desc}}</p>
             <p class="text-secondary">Created {{auction.created_at}}</p>
             <a href="{% url 'list_details' auction.id %}" class="btn btn-outline-dark">View all Details</a>
           </div>
-       
+          {% for myauction in myauctions %}
+            {% if myauction == auction %}
+            <div class="col">
+              <button type="submit" id="quantidade" class="btn btn-dark p-0 pl-1 pr-1" style="--bs-btn-padding-y: .5rem; --bs-btn-padding-x: .1rem; --bs-btn-font-size: .20rem;">
+                WatchList
+              </button>
+            </div>
+            {% endif%}
+          {% endfor %}
+         
         </div>
       </div>
     </div>
