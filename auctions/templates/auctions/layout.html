@@ -5,9 +5,11 @@
     <head>
         <title>{% block title %}Auctions{% endblock %}</title>
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-        <link href="{% static 'auctions/styles.css' %}" rel="stylesheet">
     </head>
     <body>
+        
+   
+
         <div class="container mt-4">
         <h1>Auctions</h1>
         <div>
@@ -50,33 +52,34 @@
         {% block body %}
         {% endblock %}
     </div>
+    {% block javascript %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script>
+         
 
-    <script>
-
-
-        // -----------------------------------------
-  
-        endpoint = '/showQtdWatchlist/'
-  
-        $.ajax({
-          method: "GET",
-          url: endpoint,
-          success: function(data){
-          quantidade = data
-          showQuantidade()
-          
-  
-          },
-          error: function(error_data){
-            console.log("errors")
-            console.log(error_data)
-          }
-        })
-  
-        function showQuantidade() {
+            endpoint = '/showQtdWatchlist/'
             
-        }
-      </script>
-        
+            function showQuantidade(qtd) {
+                $("#quantidade").text(qtd)
+            }
+
+            $.ajax({
+              method: "GET",
+              url: endpoint,
+              success: function(data){
+                console.log(data.qtdAuctions)
+                showQuantidade(data.qtdAuctions)
+      
+              },
+              error: function(error_data){
+                console.log("errors")
+                console.log(error_data)
+              }
+            })
+
+            
+       
+        </script>
+    {% endblock %}
     </body>
 </html>
