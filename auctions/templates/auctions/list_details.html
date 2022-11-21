@@ -21,13 +21,21 @@
       </div>
       <div class="col">
         <h2 class="card-title">{{auction.auction_title}}</h2>
-        <h6 class="card-title"> <b>Price:</b> ${{auction.initial_bids}}</h6>
+        <h6 class="card-title"> <b>Current Bid:</b> $</h6>
+        <h6 class="card-title"> <b>Initial Bid:</b> ${{auction.initial_bids}}</h6>
         <p class="card-text">{{auction.auction_desc}}</p>
         <p class="text-secondary">Created {{auction.created_at}}</p>
+        {% if user.is_authenticated %}
+        <form action="{% url 'addBid' auction.id %}" method="POST">
+          {% csrf_token %}
         <div class="form-group">
           <input class="form-control" type="number" name="bid" placeholder="Bid">
-      </div>
-      <a href="" class="btn btn-outline-dark">Place Bid</a>
+        </div>
+        <button type="submit" class="btn btn-outline-dark">Place Bid</button>
+
+        </form>
+        {% endif %}
+      
       <br><br>
       <h3>Details</h3>
       <ul>

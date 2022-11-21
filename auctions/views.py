@@ -9,6 +9,21 @@ from .models import User, Auction,Watchlist
 from django.contrib.auth.decorators import login_required
 
 
+
+
+@login_required
+def addBid(request,id_auction):
+    bid_value = request.POST['bid']
+    bid_username = request.user
+    bid_auction = id_auction
+    print(bid_value)
+    print(bid_username)
+    print(bid_auction)
+
+    return HttpResponse('bid')
+
+
+
 @login_required
 def showQtdWatchlist(request):
     watchlist = Watchlist.objects.filter(user=request.user).first()
