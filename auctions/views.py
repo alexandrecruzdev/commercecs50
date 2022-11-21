@@ -72,40 +72,30 @@ def watchlist(request):
 
 def list_details(request,id_auction):
     auction = Auction.objects.get(id=id_auction)
-    print(auction.auction_url_img)
-    len_watchlist = User.objects.all()
-    myauctions =[]
-    if not len_watchlist:
-        print('nao tem nada')
-    else:
-        print('tem algo')
-        watchlist = Watchlist.objects.filter(user=request.user).first()
-        myauctions = watchlist.auction.all()
+    watchlist_current_user = Watchlist.objects.get(user = request.user)
+    watchlist_current_user = watchlist_current_user.auction.all()
+    
+    
     context = {
         'auction': auction,
-        'myauctions':myauctions
+        'myauctions':watchlist_current_user
+       
     }
     return render(request,"auctions/list_details.html",context)
 
-
 def index(request):
     auctions = Auction.objects.all()
-    len_watchlist = User.objects.all()
-    myauctions =[]
-    if not len_watchlist:
-        print('nao tem nada')
-    else:
-        print('tem algo')
-        watchlist = Watchlist.objects.filter(user=request.user).first()
-        myauctions = watchlist.auction.all()
+    watchlist_current_user = 0
+    if request.user.is_authenticated:
+        watchlist_current_user = Watchlist.objects.get(user = request.user)
+        watchlist_current_user = watchlist_current_user.auction.all()   
+
 
    
-   
-
-
     return render(request, "auctions/index.html" ,{
         'auctions':auctions,
-        'myauctions':myauctions
+        'myauctions':watchlist_current_user
+      
        
     
     })
@@ -127,12 +117,11 @@ def create_list(request):
             auction = Auction.objects.create(auction_title = title, auction_desc = description, initial_bids =initial_bid,auction_url_img = auction_url_img, auction_category=category,created_at =created_at, created_by= created_by)
             auction.save()
             #print(title,description,initial_bid,auction_url_img,category,created_by,created_at)
-        
-            return HttpResponse("Valid")
+            return HttpResponseRedirect(reverse('index'))
 
         else:
             print(form.errors)
-            return HttpResponse("Invalid")
+            return HttpResponseRedirect(reverse('index'))
 
     return render(request,"auctions/create_list.html",{
         'form':AuctionForm()
@@ -160,7 +149,6 @@ def login_view(request):
             })
     else:
         return render(request, "auctions/login.html")
-
 
 def logout_view(request):
     logout(request)
