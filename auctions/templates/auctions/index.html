@@ -24,7 +24,7 @@
 </style>
 
 <center>
-    <h2>Active Listings</h2>
+    <h2>Active Listings</h2> 
     <div class="flex">
     {% for auction in auctions%}
     <div class="container-md">
@@ -40,15 +40,18 @@
             <p class="text-secondary">Created {{auction.created_at}}</p>
             <a href="{% url 'list_details' auction.id %}" class="btn btn-outline-dark">View all Details</a>
           </div>
-          {% for myauction in myauctions %}
-            {% if myauction == auction %}
-            <div class="col">
-              <button type="submit" id="quantidade" class="btn btn-dark p-0 pl-1 pr-1" style="--bs-btn-padding-y: .5rem; --bs-btn-padding-x: .1rem; --bs-btn-font-size: .20rem;">
-                WatchList
-              </button>
-            </div>
-            {% endif%}
-          {% endfor %}
+
+          
+            {% for myauction in myauctions %}
+              {% if myauction == auction %}
+                <div class="col">
+                 <button type="submit" id="quantidade" class="btn btn-dark p-0 pl-1 pr-1" style="--bs-btn-padding-y: .5rem; --bs-btn-padding-x: .1rem; --bs-btn-font-size: .20rem;">
+                  WatchList
+                </button>
+                </div>
+              {% endif%}
+            {% endfor %}
+      
          
         </div>
       </div>

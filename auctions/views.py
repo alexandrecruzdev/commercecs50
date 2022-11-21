@@ -73,25 +73,41 @@ def watchlist(request):
 def list_details(request,id_auction):
     auction = Auction.objects.get(id=id_auction)
     print(auction.auction_url_img)
+    len_watchlist = User.objects.all()
+    myauctions =[]
+    if not len_watchlist:
+        print('nao tem nada')
+    else:
+        print('tem algo')
+        watchlist = Watchlist.objects.filter(user=request.user).first()
+        myauctions = watchlist.auction.all()
     context = {
-        'auction': auction
+        'auction': auction,
+        'myauctions':myauctions
     }
     return render(request,"auctions/list_details.html",context)
 
 
 def index(request):
     auctions = Auction.objects.all()
-    watchlist = Watchlist.objects.filter(user=request.user).first()
-    auctions_watchlist = watchlist.auction.all()
-    myauctions = []
-    for auction in auctions:
-        for auction_watchlist in auctions_watchlist:
-            if auction == auction_watchlist:
-                myauctions.append(auction)
+    len_watchlist = User.objects.all()
+    myauctions =[]
+    if not len_watchlist:
+        print('nao tem nada')
+    else:
+        print('tem algo')
+        watchlist = Watchlist.objects.filter(user=request.user).first()
+        myauctions = watchlist.auction.all()
+
+   
+   
+
 
     return render(request, "auctions/index.html" ,{
         'auctions':auctions,
         'myauctions':myauctions
+       
+    
     })
 
 
