@@ -5,22 +5,48 @@ from django.shortcuts import redirect, render
 from django.urls import reverse
 from .forms import AuctionForm
 import datetime
-from .models import User, Auction,Watchlist
+from .models import User, Auction,Watchlist,Bid
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 
 
 
 
 @login_required
 def addBid(request,id_auction):
+    # formulário
     bid_value = request.POST['bid']
     bid_username = request.user
-    bid_auction = id_auction
-    print(bid_value)
-    print(bid_username)
-    print(bid_auction)
+    
 
-    return HttpResponse('bid')
+    # db
+    auction = Auction.objects.get(id=id_auction)
+
+    all_bids = Bid.objects.all()
+    current_list_bids = all_bids.filter(bids_auction = auction)
+    highest_bid_list = current_list_bids.order_by('-bids_value')[0:1]
+    highest_bid = list(highest_bid_list)
+
+    try:
+        highest_bid = highest_bid[0]
+        highest_bid_user = highest_bid.bids_user
+        highest_bid_value = highest_bid.bids_value
+    except IndexError:
+        highest_bid = auction.initial_bids
+        highest_bid_user = auction.created_by
+        highest_bid_value = auction.initial_bids
+
+    if float(bid_value) <= highest_bid_value:
+        #nao envia / error
+        messages.error(request,'Bid below or equal to the current bid, please bid higher than the current bid.')
+        return HttpResponseRedirect(reverse('list_details',kwargs={'id_auction':id_auction}))
+   
+    else:
+        #envia /sucess
+        messages.success(request,'Successful bid!')
+        bid = Bid.objects.create(bids_user = bid_username, bids_value = bid_value,bids_auction = auction )
+        bid.save()
+        return HttpResponseRedirect(reverse('list_details',kwargs={'id_auction':id_auction}))
 
 
 
@@ -41,6 +67,7 @@ def addWatchList(request,id_auction):
     watchlist = Watchlist.objects.get(user=request.user)
     auction = Auction.objects.get(id=id_auction)
     watchlist.auction.add(auction)
+    
     
     
     return HttpResponseRedirect(reverse('watchlist'))
@@ -87,14 +114,34 @@ def watchlist(request):
 
 def list_details(request,id_auction):
     auction = Auction.objects.get(id=id_auction)
+
+    all_bids = Bid.objects.all()
+    current_list_bids = all_bids.filter(bids_auction = auction)
+    highest_bid_list = current_list_bids.order_by('-bids_value')[0:1]
+    highest_bid = list(highest_bid_list)
+    try:
+        highest_bid = highest_bid[0]
+        highest_bid_user = highest_bid.bids_user
+        highest_bid_value = highest_bid.bids_value
+    except IndexError:
+        highest_bid = auction.initial_bids
+        highest_bid_user = auction.created_by
+        highest_bid_value = auction.initial_bids
+
+
+    
+
+
+
     watchlist_current_user = Watchlist.objects.get(user = request.user)
     watchlist_current_user = watchlist_current_user.auction.all()
     
     
     context = {
         'auction': auction,
-        'myauctions':watchlist_current_user
-       
+        'myauctions':watchlist_current_user,
+        'highest_value':highest_bid_value,
+        'highest_user':highest_bid_user       
     }
     return render(request,"auctions/list_details.html",context)
 
