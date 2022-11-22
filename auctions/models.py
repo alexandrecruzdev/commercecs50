@@ -41,6 +41,9 @@ class Bid(models.Model):
     bids_user =  models.ForeignKey(User,on_delete= models.DO_NOTHING)
     bids_value = models.FloatField()
     bids_auction = models.ForeignKey(Auction,on_delete = models.DO_NOTHING)
+    
+    def __str__(self):
+        return f"{self.user} - {self.bids_value}"
 
 
 class Comment(models.Model):
