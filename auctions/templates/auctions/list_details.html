@@ -33,56 +33,121 @@
       
     <div class="row">
       <div class="col">
-        <img src="../media/{{auction.auction_url_img}}" class="card-img-top" alt="..." >
+        <img src="../media/{{auction.auction_url_img}}" class="card-img-top" alt="..." ><br>
+        <br>
+        <p class="text-secondary">Created {{auction.created_at}} <br>Listed by {{auction.created_by}} <br> Category {{auction.auction_category}} </p>
+
       </div>
       <div class="col">
-        <h2 class="card-title">{{auction.auction_title}}</h2>
-        <h6 class="card-title"> <b>Current Bid:</b> $ {{highest_value}}</h6>
-        <h6 class="card-title"> <b>By</b> {{highest_user}}</h6>
+        <h2 class="card-title text-capitalize">{{auction.auction_title}}</h2>
+       
+
+        <div class="alert alert-success" role="alert">
+          {% if auction.auction_state %}
+          
+              {% if request.user == highest_user %}
+              <h6 class="card-title"> <b>Current Bid:</b> $ {{highest_value}}</h6>
+              <h6 class="card-title text-capitalize"> <b>You are Winning!</b> </h6>
+              {% else %}
+              <h6 class="card-title"> <b>Current Bid:</b> $ {{highest_value}}</h6>
+              <h6 class="card-title text-capitalize"> <b>Winning: {{highest_user}}</b> </h6>
+              {% endif %}
+
+          {% else %}
+
+              {% if request.user == highest_user %}
+                  <h6 class="card-title"> <b>Highest bidder:</b> $ {{highest_value}}</h6>
+                  <h6 class="card-title text-capitalize"> <b>You are Winner!</b> </h6>
+                  <h1 class="card-title text-capitalize"> <b>Congratulations!</b> </h1>
+              {% else %}
+                  <h6 class="card-title"> <b>Highest bidder:</b> $ {{highest_value}}</h6>
+                  <h6 class="card-title text-capitalize"> <b>Winner: {{highest_user}}</b> </h6>
+                  <h1 class="card-title text-capitalize"> <b>Congratulations!</b> </h1>
+              {% endif %}
+
+          
+          {% endif %}
+        </div>
+
+
         <h6 class="card-title"> <b>Initial Bid:</b> ${{auction.initial_bids}}</h6>
         <p class="card-text">{{auction.auction_desc}}</p>
-        <p class="text-secondary">Created {{auction.created_at}}</p>
+       
+       
+
         {% if user.is_authenticated %}
+        {% if auction.auction_state %}
         <form action="{% url 'addBid' auction.id %}" method="POST">
           {% csrf_token %}
         <div class="form-group">
           <input class="form-control" type="number" name="bid" placeholder="Bid" required>
         </div>
         <button type="submit" class="btn btn-outline-dark">Place Bid</button>
-
         </form>
+        {% else %}
+
+        {% endif %}
+
         {% endif %}
       
-      <br><br>
-      <h3>Details</h3>
-      <ul>
-          <li>Listed by: {{auction.created_by}}</li>
-          <li>Category: {{auction.auction_category}}</li>
-      </ul>
+     
       </div>
 
-      {%if user.is_authenticated %}
-        {% if auction in myauctions %}
-            <form action="{% url 'deleteWatchList' auction.id %}" method="POST">
-            {% csrf_token %}
-            <button type="submit" class="btn btn-outline-dark">
-            Remove WatchList
-            </button>
-          </form>
-        {% else %}
-        <div class="d-grid gap-2 d-md-block">
-        <a href="{% url 'addWatchList' auction.id %}" class="btn btn-outline-dark" data-bs-toggle="button">Add WatchList</a>
+    </div>
+<!-- comment container -->
+<hr>
+<div class="col-md-10 col-lg-10" >
+  <div class="card" >
+    <div class=" p-4">
+      <form action="{% url 'addComment' auction.id %}" method="POST" >
+      {% csrf_token %}
+      <div class="form-outline mb-4 d-flex p-4">
+        
+        <input type="text" id="addANote" class="form-control"  name="comment" placeholder="Type comment..." />
+        <button type="submit" class="btn btn-dark ml-2" data-mdb-ripple-color="light">Comment</button>
+        
+      </div>
+    </form>
+  
+
+  
+  {% for comment in comments %}
+  <div class="card mb-4">
+    <div class="card-body">
+      <p>{{comment.comment}}</p>
+      
+      
+      <div class="d-flex justify-content-between">
+        <div class="d-flex flex-row align-items-center">
+          <img src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/img%20(32).webp" alt="avatar" width="55"height="55" class="mr-3" />
+          <p class="small mb-0 ms-2">{{comment.comment_author}}</p>
+        </div>
+        {% if request.user == comment.comment_author or request.user == auction.created_by %}
+        <div class="d-flex flex-row align-items-center">
+          <a href="{% url 'deleteComment' comment.id auction.id %}" class="btn btn-danger ml-2" data-mdb-ripple-color="light">x</a>
         </div>
         {% endif %}
-     
-      
-      {% else %}
-      <h1>Nao autenticado</h1>
-      {% endif %}
-    </div>
 
+      </div>
+
+      
+    </div>
+  </div>
+  {% endfor %}
+     
+
+ 
+    </div>
   </div>
 </div>
+<!-- end -->
+  </div>
+ 
+</div>
+
+
+
+
 
   
 

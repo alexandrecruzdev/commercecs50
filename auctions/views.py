@@ -5,11 +5,92 @@ from django.shortcuts import redirect, render
 from django.urls import reverse
 from .forms import AuctionForm
 import datetime
-from .models import User, Auction,Watchlist,Bid
+from .models import User, Auction,Watchlist,Bid, Comment
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 
 
+@login_required
+def listingsCategory(request,category):
+    auctions = Auction.objects.filter(auction_category=category)
+    context = {
+        'auctions':auctions
+    }
+    return render(request,'auctions/listingsCategory.html',context)
+
+
+
+@login_required
+def categorys(request):
+    auctions = Auction.objects.all()
+    categorys = []
+    
+    
+    for auction in auctions:
+        categorys.append(auction.auction_category)
+    
+    categorys_distinct = set(categorys)
+
+    context = {
+        'categorys':categorys_distinct
+    }
+    return render(request,'auctions/categorys.html',context)
+
+
+@login_required
+def deleteComment(request,id_comment,id_auction):
+    comment = Comment.objects.get(id = id_comment)
+    comment.delete()
+    return HttpResponseRedirect(reverse('list_details',kwargs={'id_auction':id_auction}))
+
+@login_required
+def addComment(request,id_auction):
+    if request.method == 'POST':
+        comment_post = request.POST['comment']
+        auction =Auction.objects.get(id=id_auction)
+        author_comment = request.user
+
+        comment = Comment.objects.create(auction=auction,comment=comment_post,comment_author=author_comment)
+        comment.save()
+
+    return HttpResponseRedirect(reverse('list_details',kwargs={'id_auction':id_auction}))
+
+
+@login_required
+def deactivateAuction(request,id_auction):
+    auction = Auction.objects.get(id=id_auction)
+    auction.auction_state = False
+    auction.save()
+    print(auction.auction_title)
+    return HttpResponseRedirect(reverse('listings'))
+
+@login_required
+def activateAuction(request,id_auction):
+    auction = Auction.objects.get(id=id_auction)
+    auction.auction_state = True
+    auction.save()
+    print(auction.auction_title)
+    return HttpResponseRedirect(reverse('listings'))
+
+
+
+
+@login_required
+def listings(request):
+    auctions = Auction.objects.all()
+    watchlist_current_user = 0
+    if request.user.is_authenticated:
+        watchlist_current_user = Watchlist.objects.get(user = request.user)
+        watchlist_current_user = watchlist_current_user.auction.all()   
+
+
+    return render(request, "auctions/listings.html" ,{
+        'auctions':auctions,
+        'myauctions':watchlist_current_user
+      
+       
+    
+    })
 
 
 @login_required
@@ -70,7 +151,7 @@ def addWatchList(request,id_auction):
     
     
     
-    return HttpResponseRedirect(reverse('watchlist'))
+    return HttpResponseRedirect(reverse('index'))
 
 
 @login_required
@@ -81,7 +162,7 @@ def deleteWatchList(request,id_auction):
     watchlist.auction.remove(auction)
     
     
-    return HttpResponseRedirect(reverse('watchlist'))
+    return HttpResponseRedirect(reverse('index'))
 
 
 @login_required
@@ -114,11 +195,13 @@ def watchlist(request):
 
 def list_details(request,id_auction):
     auction = Auction.objects.get(id=id_auction)
-
+    comments = Comment.objects.filter(auction=id_auction)
+   
     all_bids = Bid.objects.all()
     current_list_bids = all_bids.filter(bids_auction = auction)
     highest_bid_list = current_list_bids.order_by('-bids_value')[0:1]
     highest_bid = list(highest_bid_list)
+
     try:
         highest_bid = highest_bid[0]
         highest_bid_user = highest_bid.bids_user
@@ -141,7 +224,8 @@ def list_details(request,id_auction):
         'auction': auction,
         'myauctions':watchlist_current_user,
         'highest_value':highest_bid_value,
-        'highest_user':highest_bid_user       
+        'highest_user':highest_bid_user,
+        'comments':comments
     }
     return render(request,"auctions/list_details.html",context)
 
@@ -149,9 +233,15 @@ def index(request):
     auctions = Auction.objects.all()
     watchlist_current_user = 0
     if request.user.is_authenticated:
-        watchlist_current_user = Watchlist.objects.get(user = request.user)
-        watchlist_current_user = watchlist_current_user.auction.all()   
-
+        
+        try:
+            watchlist_current_user = Watchlist.objects.get(user = request.user)
+            watchlist_current_user = watchlist_current_user.auction.all()   
+        except Watchlist.DoesNotExist:
+            watchlist = Watchlist.objects.create(user=request.user)
+            watchlist.save()
+            watchlist_current_user = Watchlist.objects.get(user = request.user)
+            watchlist_current_user = watchlist_current_user.auction.all()   
 
    
     return render(request, "auctions/index.html" ,{
@@ -173,6 +263,18 @@ def create_list(request):
             initial_bid = form.cleaned_data["initial_bid"]
             auction_url_img = form.cleaned_data["auction_url_img"]
             category = form.cleaned_data["category"]
+            len_str = len(str(category))
+            print(f"{category},{len_str}")
+
+            if category[len_str-1] == 's' or category[len_str-1] == 'S':
+                category = category.lower()
+                
+            else:
+                category += 's'
+                category = category.lower()
+
+
+
             created_by = request.user
             created_at = datetime.datetime.now() 
 

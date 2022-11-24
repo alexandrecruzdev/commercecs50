@@ -15,7 +15,16 @@ urlpatterns = [
     path("deleteWatchList/<int:id_auction>",views.deleteWatchList, name="deleteWatchList"),
     path("watchlist/",views.watchlist, name="watchlist"),
     path("showQtdWatchlist/",views.showQtdWatchlist, name="showQtdWatchlist"),
-    path("addBid/<int:id_auction>",views.addBid, name="addBid")
+    path("addBid/<int:id_auction>",views.addBid, name="addBid"),
+    path("addComment/<int:id_auction>",views.addComment, name="addComment"),
+    path("deleteComment/<int:id_comment>/<int:id_auction>",views.deleteComment, name="deleteComment"),
+    path("deactivateAuction/<int:id_auction>",views.deactivateAuction, name="deactivateAuction"),
+    path("activateAuction/<int:id_auction>",views.activateAuction, name="activateAuction"),
+    path("listings/",views.listings, name="listings"),
+    path("listingsCategory/<str:category>",views.listingsCategory, name="listingsCategory"),
+    path("categorys/",views.categorys, name="categorys")
+
+
 
 
 
