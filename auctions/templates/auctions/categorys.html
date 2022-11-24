@@ -1,0 +1,24 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+<center>
+
+</center>
+<div class="d-flex justify-content-center flex-wrap">
+
+   
+
+    {% for category in categorys %}
+    <a href="{% url 'listingsCategory' category %}" class="btn btn-outline-dark m-2 p-4 w-100" data-mdb-ripple-color="light">
+         <h2>{{category.capitalize}}</h2>
+    </a>
+
+    
+    {% endfor %}
+
+
+  
+
+</div>
+  
+{% endblock %}

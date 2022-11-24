@@ -17,6 +17,7 @@ class Auction(models.Model):
     auction_category = models.CharField(max_length=30)
     created_at = models.DateField()
     created_by = models.ForeignKey(User,on_delete=models.CASCADE)
+    auction_state = models.BooleanField(default=True)
 
     def __str__(self):
         return self.auction_title
@@ -51,5 +52,8 @@ class Comment(models.Model):
     auction = models.ForeignKey(Auction, on_delete= models.DO_NOTHING)
     comment = models.CharField(max_length=255)
     comment_author = models.ForeignKey(User, on_delete = models.DO_NOTHING)
+
+    def __str__(self):
+        return f"{self.comment} - {self.comment_author}"
 
 
