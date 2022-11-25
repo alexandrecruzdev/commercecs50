@@ -26,7 +26,7 @@
         {% endif %}
         <br>
         <figure class="figure">
-          <img src="../media/{{auction.auction_url_img}}" class="figure-img img-fluid rounded" alt="A generic square placeholder image with rounded corners in a figure." width="300px">
+          <img src="../media/{{auction.auction_url_img}}" class="figure-img img-fluid rounded" alt="A generic square placeholder image with rounded corners in a figure." width="300px" height="200px">
         </figure>
       </div>
 
@@ -39,9 +39,9 @@
         <a href="{% url 'list_details' auction.id %}" class="btn btn-outline-dark m-3">View all Details</a>
         {% if request.user == auction.created_by %}
         {% if auction.auction_state %}
-        <a href="{% url 'deactivateAuction' auction.id %}" class="btn btn-danger">Deactivate</a>
+        <a href="{% url 'deactivateAuction' auction.id %}" class="btn btn-danger">Close Auction</a>
         {% else %}
-        <a href="{% url 'activateAuction' auction.id %}" class="btn btn-success"  >Activate</a>
+        <a href="{% url 'activateAuction' auction.id %}" class="btn btn-success"  >Open Auction</a>
         {% endif %}
         {% endif %}
         <br><br>

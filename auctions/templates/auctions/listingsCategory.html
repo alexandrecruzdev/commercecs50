@@ -24,7 +24,7 @@
   <center>
       <h2>Listings</h2> 
       <div class="flex">
-      {% for auction in auctions%}
+      {% for auction in auctions_category%}
     
       <div class="container-md ">
         <div class="container border p-4 ">
@@ -76,6 +76,7 @@
                 </button>
               </form>
             {% else %}
+            
             <div class="d-grid gap-2 d-md-block">
             <a href="{% url 'addWatchList' auction.id %}" class="btn btn-outline-dark" data-bs-toggle="button">Add WatchList</a>
             </div>

@@ -119,7 +119,7 @@
       
       <div class="d-flex justify-content-between">
         <div class="d-flex flex-row align-items-center">
-          <img src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/img%20(32).webp" alt="avatar" width="55"height="55" class="mr-3" />
+          <img src="../media/{{comment.comment_author.perfil_image}}" alt="avatar" width="55"height="55" class="mr-3" />
           <p class="small mb-0 ms-2">{{comment.comment_author}}</p>
         </div>
         {% if request.user == comment.comment_author or request.user == auction.created_by %}

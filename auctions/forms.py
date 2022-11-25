@@ -1,6 +1,7 @@
 from distutils.command.upload import upload
 from django import forms
-from .models import Auction
+from django.forms import ModelForm
+from .models import Auction, User
 
 
 class AuctionForm(forms.Form):
@@ -16,5 +17,9 @@ class AuctionForm(forms.Form):
     initial_bid.widget.attrs.update({'class': 'form-control  w-75 '})
     auction_url_img.widget.attrs.update({'class': 'form-control  w-75'})
     category.widget.attrs.update({'class': 'form-control  w-75 '})
+
+
+
+    
 
     
