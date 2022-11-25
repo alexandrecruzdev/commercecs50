@@ -8,13 +8,23 @@ import datetime
 from .models import User, Auction,Watchlist,Bid, Comment
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.core.files.storage import FileSystemStorage
 
 
 @login_required
 def listingsCategory(request,category):
-    auctions = Auction.objects.filter(auction_category=category)
+    auctions_category = Auction.objects.filter(auction_category=category)
+
+    auctions = Auction.objects.all()
+    watchlist_current_user = 0
+
+    if request.user.is_authenticated:
+        watchlist_current_user = Watchlist.objects.get(user = request.user)
+        watchlist_current_user = watchlist_current_user.auction.all()   
+
     context = {
-        'auctions':auctions
+        'auctions_category':auctions_category,
+        'myauctions': watchlist_current_user
     }
     return render(request,'auctions/listingsCategory.html',context)
 
@@ -61,16 +71,16 @@ def deactivateAuction(request,id_auction):
     auction = Auction.objects.get(id=id_auction)
     auction.auction_state = False
     auction.save()
-    print(auction.auction_title)
-    return HttpResponseRedirect(reverse('listings'))
+   
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 @login_required
 def activateAuction(request,id_auction):
     auction = Auction.objects.get(id=id_auction)
     auction.auction_state = True
     auction.save()
-    print(auction.auction_title)
-    return HttpResponseRedirect(reverse('listings'))
+
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 
 
@@ -151,7 +161,7 @@ def addWatchList(request,id_auction):
     
     
     
-    return HttpResponseRedirect(reverse('index'))
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 
 @login_required
@@ -162,7 +172,7 @@ def deleteWatchList(request,id_auction):
     watchlist.auction.remove(auction)
     
     
-    return HttpResponseRedirect(reverse('index'))
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 
 @login_required
@@ -196,7 +206,8 @@ def watchlist(request):
 def list_details(request,id_auction):
     auction = Auction.objects.get(id=id_auction)
     comments = Comment.objects.filter(auction=id_auction)
-   
+    user = User.objects.get(username=request.user)
+    print(user.perfil_image)
     all_bids = Bid.objects.all()
     current_list_bids = all_bids.filter(bids_auction = auction)
     highest_bid_list = current_list_bids.order_by('-bids_value')[0:1]
@@ -225,7 +236,8 @@ def list_details(request,id_auction):
         'myauctions':watchlist_current_user,
         'highest_value':highest_bid_value,
         'highest_user':highest_bid_user,
-        'comments':comments
+        'comments':comments,
+        'user':user
     }
     return render(request,"auctions/list_details.html",context)
 
@@ -323,10 +335,14 @@ def register(request):
     if request.method == "POST":
         username = request.POST["username"]
         email = request.POST["email"]
-
         # Ensure password matches confirmation
         password = request.POST["password"]
         confirmation = request.POST["confirmation"]
+
+        request_file = request.FILES['pefil_image'] if 'perfil_image' in request.FILES else None
+
+
+
         if password != confirmation:
             return render(request, "auctions/register.html", {
                 "message": "Passwords must match."
@@ -335,6 +351,9 @@ def register(request):
         # Attempt to create new user
         try:
             user = User.objects.create_user(username, email, password)
+            user.save()
+            user = User.objects.get(username=username)
+            user.perfil_image = request_file
             user.save()
             watchlist = Watchlist.objects.create(user=user)
             watchlist.save()
