@@ -10,7 +10,6 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.core.files.storage import FileSystemStorage
 
-
 @login_required
 def listingsCategory(request,category):
     auctions_category = Auction.objects.filter(auction_category=category)
@@ -204,10 +203,13 @@ def watchlist(request):
 
 
 def list_details(request,id_auction):
+
+  
+    
+
     auction = Auction.objects.get(id=id_auction)
     comments = Comment.objects.filter(auction=id_auction)
     user = User.objects.get(username=request.user)
-    print(user.perfil_image)
     all_bids = Bid.objects.all()
     current_list_bids = all_bids.filter(bids_auction = auction)
     highest_bid_list = current_list_bids.order_by('-bids_value')[0:1]
@@ -339,7 +341,6 @@ def register(request):
         password = request.POST["password"]
         confirmation = request.POST["confirmation"]
 
-        request_file = request.FILES['pefil_image'] if 'perfil_image' in request.FILES else None
 
 
 
@@ -353,8 +354,7 @@ def register(request):
             user = User.objects.create_user(username, email, password)
             user.save()
             user = User.objects.get(username=username)
-            user.perfil_image = request_file
-            user.save()
+          
             watchlist = Watchlist.objects.create(user=user)
             watchlist.save()
         except IntegrityError:
