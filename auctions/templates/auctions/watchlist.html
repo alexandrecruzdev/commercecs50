@@ -16,37 +16,38 @@
   <center>
       {% if qtdAuctions > 0 %}  
       <h2>Watchlist</h2>
-      <div class="flex">
+      
       {% for auction in auctions %}
-   
+      <div class="d-flex flex-wrap justify-content-center border m-2">
 
-        <div class="container-md">
-            
-            <div class="container border  p-4 ">
-                
-              <div class="row">
-                <div class="col">
-                  <img src="../media/{{auction.auction_url_img}}" class="card-img-top" alt="...">
-                </div>
-                <div class="col">
+
+        <div class="m-4">
+          <figure class="figure">
+            <img src="../media/{{auction.auction_url_img}}" class="figure-img img-fluid rounded" alt="A generic square placeholder image with rounded corners in a figure." width="300px" height="200px">
+          </figure>
+        </div>
+
+        <div class="m-4">
+
                   <h2 class="card-title">{{auction.auction_title}}</h2>
                   <h6 class="card-title"> <b>Price:</b> ${{auction.initial_bids}}</h6>
                   <p class="card-text">{{auction.auction_desc}}</p>
                   <p class="text-secondary">Created {{auction.created_at}}</p>
                   <a href="{% url 'list_details' auction.id %}" class="btn btn-outline-dark">View all Details</a>
-                </div>
+        </div>
+
+        <div class="m-4">
+
                 <form action="{% url 'deleteWatchList' auction.id %}" method="POST">
                   {% csrf_token %}
               <button type="submit" class="btn btn-outline-dark">
                  Remove WatchList
                   </button>
               </form>
-              </div>
-            </div>
-          </div>
-
-      {% endfor %}
+        </div>
       </div>
+      {% endfor %}
+    
 
       {% else %}
         <h1>No item yet</h1>

@@ -8,7 +8,6 @@ GENDER_CHOICES = (
 
 class User(AbstractUser):
     pass
-    perfil_image = models.ImageField(upload_to="upload/images/perfil_image/")
 
 
 class Auction(models.Model):
@@ -30,7 +29,7 @@ class Auction(models.Model):
 
 
 class Watchlist(models.Model):
-    user = models.OneToOneField(User, on_delete=models.DO_NOTHING)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     auction =  models.ManyToManyField(Auction)
 
     def __str__(self):

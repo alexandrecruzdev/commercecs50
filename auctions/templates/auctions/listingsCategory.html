@@ -23,14 +23,10 @@
   
   <center>
       <h2>Listings</h2> 
-      <div class="flex">
       {% for auction in auctions_category%}
-    
-      <div class="container-md ">
-        <div class="container border p-4 ">
-          <div class="row" >
-            
-            <div class="col">
+      <div class="d-flex flex-wrap justify-content-center border m-2">
+
+        <div class="m-4">
               {% if user.is_authenticated %}
   
               {% for myauction in myauctions %}
@@ -44,10 +40,12 @@
                 {% endif %}
               {% endfor %}
             {% endif %}
-            <br>
-              <img src="../media/{{auction.auction_url_img}}" class="card-img-top cover" alt="...">
-            </div>
-            <div class="col w-20">
+            <figure class="figure">
+              <img src="../media/{{auction.auction_url_img}}" class="figure-img img-fluid rounded" alt="A generic square placeholder image with rounded corners in a figure." width="300px" height="200px">
+            </figure>
+        </div>
+          
+        <div class="m-4">
               <h2 class="card-title text-capitalize">{{auction.auction_title}}</h2>
               <h6 class="card-title text-capitalize"> <b>Price:</b> ${{auction.initial_bids}}</h6>
               <p class="card-text">{{auction.auction_desc}}</p>
@@ -65,7 +63,7 @@
              
   
               {% endif %}
-            </div>
+        
             {%if user.is_authenticated %}
   
             {% if auction in myauctions %}
@@ -77,25 +75,21 @@
               </form>
             {% else %}
             
-            <div class="d-grid gap-2 d-md-block">
+           
             <a href="{% url 'addWatchList' auction.id %}" class="btn btn-outline-dark" data-bs-toggle="button">Add WatchList</a>
-            </div>
-            
+      
+        
             {% endif %}
          
           
           {% else %}
           <!-- <h1>Nao autenticado</h1> -->
           {% endif %}
-          </div>
         </div>
+
       </div>
-      
-  
-      
-     
       {% endfor %}
-      </div>
+     
       <center>
 
   

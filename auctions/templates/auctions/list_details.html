@@ -109,7 +109,6 @@
       </div>
     </form>
   
-
   
   {% for comment in comments %}
   <div class="card mb-4">
@@ -119,7 +118,7 @@
       
       <div class="d-flex justify-content-between">
         <div class="d-flex flex-row align-items-center">
-          <img src="../media/{{comment.comment_author.perfil_image}}" alt="avatar" width="55"height="55" class="mr-3" />
+         <p class="bg-primary text-capitalize  rounded p-3 m-2" >{{comment.comment_author | make_list | first }}</p>
           <p class="small mb-0 ms-2">{{comment.comment_author}}</p>
         </div>
         {% if request.user == comment.comment_author or request.user == auction.created_by %}
